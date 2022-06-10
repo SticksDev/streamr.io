@@ -7,13 +7,13 @@ import { Dialog } from 'primereact/dialog';
 import { InputNumber  } from 'primereact/inputnumber';
 import { Toast } from 'primereact/toast';
 import { SplitButton } from 'primereact/splitbutton';
-import { ConfirmDialog } from 'primereact/confirmdialog';
 import { useState, useRef } from 'react';
 import swal from 'sweetalert2';
 import { useSession, signIn, signOut } from "next-auth/react"
 import { useEffect } from 'react';
+import { supabase } from '../utils/supbaseclient';
 
-export default function appSignIn() {
+export default function donatePageTemplate() {
     const router = useRouter();
     const { slug } = router.query;
 
@@ -22,11 +22,7 @@ export default function appSignIn() {
 
     const currentSession = useSession();
 
-    // Login form values/states
-    const [isLoginDialogVisible, setIsLoginDialogVisible] = useState(false);
-    const [isLoginFormButtonLoading, setIsLoginFormButtonLoading] = useState(false);
-    const [loginFormEmail, setLoginFormEmail] = useState('');
-    const [loginFormPassword, setLoginFormPassword] = useState('');
+    
 
     const splitButtonOpts = [
         {
@@ -48,6 +44,13 @@ export default function appSignIn() {
                 });
                 return
             },
+        },
+        {
+            label: 'Dashboard',
+            icon: 'pi pi-fw pi-cog',
+            command: () => {
+                router.push('/user/settings');
+            }
         },
         {
             label: 'Logout',
@@ -80,21 +83,7 @@ export default function appSignIn() {
         },
     ];
 
-    // Create header component
-    const items = [];
-
-    // Make a generic layout for the events page using primereact
-    // There should be a:
-    // Event name
-    // Event description
-    // Event date
-    // Event time
-    // Event location (either ETS or ATC)
-    // Event RSVP Button - if logged in, show RSVP button
-
-    // Determine if the user is logged in
-
-    const handlePayClick = () => {
+   const handlePayClick = () => {
         if(currentSession.status !== 'authenticated') {
             toast.current.show({
                 severity: 'error',
@@ -155,7 +144,6 @@ export default function appSignIn() {
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" />
             <Toast ref={toast} />
             <Menubar
-                model={items}
                 end={
                     currentSession.status === "authenticated" ? (
                         <SplitButton
@@ -175,7 +163,7 @@ export default function appSignIn() {
                     )
                 }
             />
-             <link rel='stylesheet' href='/paymentpage.css'/>
+            <link rel='stylesheet' href='/paymentpage.css'/>
             <br /> <br />
             <div style={{ position: 'absolute', top: '20%', left: '32%' }}>
                 <Card
@@ -184,7 +172,7 @@ export default function appSignIn() {
                     title={'Donating to ' + slug}
                     style={{ width: '50em', height: '35em' }}
                 >
-                    sethsharts is just another streamer on twitch. You should donate below!
+                    {slug} is just another streamer on twitch. You should donate below!
                 </Card>
             </div>
         </div>
